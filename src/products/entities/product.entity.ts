@@ -1,4 +1,6 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+//* ENTITY la informacion que van a tener la base de datos 
 
 @Entity()
 export class Product {
@@ -40,8 +42,15 @@ export class Product {
     @Column('text')
     gender: string;
 
+    @Column('text', {
+        array: true,
+        default: []
+    }
+    )
+    tags: string[]
 
-    // tags
+
+
     //images
 
 
@@ -60,11 +69,22 @@ export class Product {
             .toLowerCase()
             .replaceAll(' ', '_')
             .replaceAll("'", '')
-            .replaceAll('.','')
+            .replaceAll('.', '')
     }
 
 
-    //TODO @BeforUpdate()
+
+
+    @BeforeUpdate()
+    checkSlugUpdate() {
+
+        this.slug = this.slug
+            .toLowerCase()
+            .replaceAll(' ', '_')
+            .replaceAll("'", '')
+            .replaceAll('.', '')
+
+    }
 
 }
 

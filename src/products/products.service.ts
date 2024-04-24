@@ -64,7 +64,7 @@ export class ProductsService {
 
       const queryBuilder = this.productRepository.createQueryBuilder();// esto hace que el buscador sea mas seguro en la url para que signos vacios o raros no se injecten sql
       product = await queryBuilder
-      
+
         .where('UPPER(title) = :title or slug =:slug', // :title poner los dos puntos juntos y no separados por que sino salta error 
           {
             title: term.toUpperCase(),
