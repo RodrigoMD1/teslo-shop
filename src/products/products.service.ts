@@ -2,10 +2,11 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid'
+import { ProductImage } from './entities/product-image.entity';
 
 
 @Injectable()
@@ -18,6 +19,10 @@ export class ProductsService {
 
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<Product>,
+
   ) { }
 
 
@@ -26,11 +31,18 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto) {
 
     try {
+      const { images = [], ...productDetails } = createProductDto
 
-      const product = this.productRepository.create(createProductDto); //*esto lo crea pero no lo guarda en la base de datos
+      const product = this.productRepository.create(
+        {
+          ...productDetails,
+          images: images.map(image => ({ url: image }) as DeepPartial<ProductImage>)
+        }); //*esto lo crea pero no lo guarda en la base de datos
+
+
       await this.productRepository.save(product); // *esto lo guarda en la base de datos 
 
-      return product;
+      return { ...product, images };
 
     } catch (error) {
       this.handleDBExceptions(error);
@@ -88,7 +100,8 @@ export class ProductsService {
 
     const product = await this.productRepository.preload({
       id: id,
-      ...updateProductDto
+      ...updateProductDto,
+      images: []
     });
 
     if (!product) throw new NotFoundException(`product with id ${id} not found `)
