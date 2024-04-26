@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid'
@@ -22,6 +22,8 @@ export class ProductsService {
 
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<Product>,
+
+    private readonly dataSource: DataSource,
 
   ) { }
 
@@ -52,15 +54,22 @@ export class ProductsService {
 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationDto) {
 
     const { limit = 10, offset = 0 } = paginationDto
 
-    return this.productRepository.find({
+    const products = await this.productRepository.find({
       take: limit,
       skip: offset,
-      //TODO: relaciones
+      relations: {
+        images: true,
+      }
     });
+
+    return products.map(product => ({
+      ...product,
+      images: product.images.map(img => img.url)
+    }))
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,17 +83,18 @@ export class ProductsService {
     } else {
       //product = await this.productRepository.findOneBy({ slug: term });// buscar por slug
 
-      const queryBuilder = this.productRepository.createQueryBuilder();// esto hace que el buscador sea mas seguro en la url para que signos vacios o raros no se injecten sql
+      const queryBuilder = this.productRepository.createQueryBuilder('prod');// esto hace que el buscador sea mas seguro en la url para que signos vacios o raros no se injecten sql
       product = await queryBuilder
 
         .where('UPPER(title) = :title or slug =:slug', // :title poner los dos puntos juntos y no separados por que sino salta error 
           {
             title: term.toUpperCase(),
             slug: term.toLowerCase(),
-          }).getOne();
+          })
+        .leftJoinAndSelect('prod.images', 'prodImages')
+        .getOne();
 
     }
-
     //const product = await this.productRepository.findOneBy({ id });
 
     if (!product)
@@ -93,18 +103,29 @@ export class ProductsService {
     return product;
   }
 
+  async findOnePlain(term: string) {
+    const { images = [], ...rest } = await this.findOne(term);
+    return {
+      ...rest,
+      images: images.map(image => image.url)
+    } // esto el findonePlain funciona para que se relacione con la base de datos de imagenes y esto como que suma la tabla normal y la de imagenes 
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   async update(id: string, updateProductDto: UpdateProductDto) {
 
+    const { images, ...toUpdate } = updateProductDto;
 
-    const product = await this.productRepository.preload({
-      id: id,
-      ...updateProductDto,
-      images: []
-    });
+    const product = await this.productRepository.preload({ id, ...toUpdate });
 
     if (!product) throw new NotFoundException(`product with id ${id} not found `)
+
+    // Create query runner
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
 
     try {
 
@@ -115,9 +136,6 @@ export class ProductsService {
       this.handleDBExceptions(error);
 
     }
-
-
-
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,8 +149,6 @@ export class ProductsService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 

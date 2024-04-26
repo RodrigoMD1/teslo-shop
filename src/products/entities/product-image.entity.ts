@@ -16,10 +16,10 @@ export class ProductImage {
 
 
     @ManyToOne(
-        ()=> Product,
+        () => Product,
         (product) => product.images
     )
     product: Product
 
-//TODO  averiguar donde esta el productid en la tabla osea esta pero nose de donde saco ese nombre por ejemplo
+    //TODO  averiguar donde esta el productid en la tabla osea esta pero nose de donde saco ese nombre por ejemplo
 }
