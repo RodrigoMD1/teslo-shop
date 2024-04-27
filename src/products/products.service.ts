@@ -138,10 +138,6 @@ export class ProductsService {
         product.images = images.map(
           image => this.productImageRepository.create({ url: image })
         )
-      } else {
-
-        /////
-
       }
       await queryRunner.manager.save(product);
       //      await this.productRepository.save(product);
@@ -202,7 +198,7 @@ export class ProductsService {
       this.handleDBExceptions(error);
 
     }
-// esto es algo que solo es para desarollo o produccion  esto puede eliminar todos los productos de la base de datos tambien la de imagenes 
+    // esto es algo que solo es para desarollo o produccion  esto puede eliminar todos los productos de la base de datos tambien la de imagenes 
 
 
   }

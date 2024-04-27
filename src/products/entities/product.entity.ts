@@ -47,6 +47,7 @@ export class Product {
         array: true,
         default: []
     }
+    
     )
     tags: string[]
 
