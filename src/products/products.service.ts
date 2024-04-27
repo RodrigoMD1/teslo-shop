@@ -17,11 +17,13 @@ export class ProductsService {
 
   constructor(
 
+    //*SIEMPRE REVISAR QUE ESTAN BIEN ESCRITOS  LA PARTE DE Repository<Product> y el otro tambien 
+
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
 
     @InjectRepository(ProductImage)
-    private readonly productImageRepository: Repository<Product>,
+    private readonly productImageRepository: Repository<ProductImage>,
 
     private readonly dataSource: DataSource,
 
@@ -129,9 +131,29 @@ export class ProductsService {
 
     try {
 
-      return this.productRepository.save(product)
+      if (images) {
+        await queryRunner.manager.delete(ProductImage, { product: { id } })
+
+
+        product.images = images.map(
+          image => this.productImageRepository.create({ url: image })
+        )
+      } else {
+
+        /////
+
+      }
+      await queryRunner.manager.save(product);
+      //      await this.productRepository.save(product);
+      await queryRunner.commitTransaction();
+      await queryRunner.release()
+
+      return this.findOnePlain(id);
 
     } catch (error) {
+
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
 
       this.handleDBExceptions(error);
 
@@ -161,6 +183,27 @@ export class ProductsService {
 
     this.logger.error(error); //* aca se llama a los errores mas limpios de la consola se puede usar en todo el archivo de service 
     throw new InternalServerErrorException('Unexpected error,check server logs')
+
+  }
+
+
+  async deleteAllProducts() {
+    const query = this.productRepository.createQueryBuilder('product')
+
+    try {
+
+      return await query
+        .delete()
+        .where({})
+        .execute();
+
+    } catch (error) {
+
+      this.handleDBExceptions(error);
+
+    }
+// esto es algo que solo es para desarollo o produccion  esto puede eliminar todos los productos de la base de datos tambien la de imagenes 
+
 
   }
 

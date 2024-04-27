@@ -17,9 +17,10 @@ export class ProductImage {
 
     @ManyToOne(
         () => Product,
-        (product) => product.images
+        (product) => product.images,
+        {onDelete: 'CASCADE'}
     )
     product: Product
 
-    //TODO  averiguar donde esta el productid en la tabla osea esta pero nose de donde saco ese nombre por ejemplo
+    //TODO  averiguar donde esta el productid en la tabla osea esta pero nose de donde saco ese nombre por ejemplo que se genera en la base de datos 
 }

@@ -3,7 +3,7 @@ import { ProductImage } from "./product-image.entity";
 
 //* ENTITY la informacion que van a tener la base de datos 
 
-@Entity()
+@Entity() // dentro de los () de entity podes poner {name: 'products} para cambiarle el nombre a la tabla pero se puede borrar la base de datos creo 
 export class Product {
 
     @PrimaryGeneratedColumn('uuid')
@@ -78,7 +78,7 @@ export class Product {
     }
 
 
-
+    //TODO PREGUNTAR esto solo sirve para el slug ahora si quiero que en title se aplique tengo que volver a crear todo lo de la linea 68 a 77 ??  
 
     @BeforeUpdate()
     checkSlugUpdate() {
