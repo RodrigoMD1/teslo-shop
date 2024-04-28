@@ -66,7 +66,7 @@ export class ProductsService {
       relations: {
         images: true,
       }
-    });
+    }) ;
 
     return products.map(product => ({
       ...product,
