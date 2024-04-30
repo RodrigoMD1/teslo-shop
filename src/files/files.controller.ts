@@ -4,13 +4,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 
 
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) { }
+  constructor(
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService,
+  ) { }
 
   /////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +29,7 @@ export class FilesController {
 
 
     res.sendFile(path);
-    
+
     //res.status(403).json({
     // ok: false,
     // path: path
@@ -55,7 +59,7 @@ export class FilesController {
       throw new BadRequestException('make sure that the file is an image')
     }
 
-    const secureUrl = `${file.filename}`;
+    const secureUrl = `${this.configService.get('HOST_API')}/files/products/${file.filename}`;
 
     return { secureUrl }
 
