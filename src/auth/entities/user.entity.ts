@@ -32,7 +32,7 @@ export class User {
     /////////////////////////////////////////////////////
 
     @Column('bool', {
-        unique: true
+        default: true
     })
     isActive: boolean;
 
