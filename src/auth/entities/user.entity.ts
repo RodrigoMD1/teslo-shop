@@ -19,14 +19,14 @@ export class User {
 
     /////////////////////////////////////////////////////
 
-    @Column('text')
+    @Column('text', {
+        select: false
+    })
     password: string;
 
     /////////////////////////////////////////////////////
 
-    @Column('text', {
-        unique: true,
-    })
+    @Column('text')
     fullName: string;
 
     /////////////////////////////////////////////////////
