@@ -27,7 +27,7 @@ export class AuthController {
     return {
       ok: true,
       message: 'holaa',
-      user: { name: 'rodrigoo' }
+      user: { name: 'rodrigooo' }
     }
   }
 
