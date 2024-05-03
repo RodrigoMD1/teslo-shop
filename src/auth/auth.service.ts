@@ -6,6 +6,8 @@ import { User } from './entities/user.entity';
 
 import * as bcrypt from 'bcrypt'
 import { LoginUserDto, CreateUserDto } from './dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +15,9 @@ export class AuthService {
 
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+
+    private readonly jwtService: JwtService,
   ) { }
 
 
@@ -35,9 +39,10 @@ export class AuthService {
       await this.userRepository.save(user)
       delete user.password
 
-      return user;
-
-      //TODO retornar el jwt DE ACCESO
+      return {
+        ...user,
+        token: this.getJwtToken({ id: user.id })
+      };
 
 
     } catch (error) {
@@ -48,7 +53,7 @@ export class AuthService {
 
   ////////////////////////////////////////////////////////////////////
 
-  async login( loginUserDto: LoginUserDto ) {
+  async login(loginUserDto: LoginUserDto) {
 
     const { password, email } = loginUserDto;
 
@@ -57,19 +62,28 @@ export class AuthService {
       select: { email: true, password: true, id: true } //! OJO!
     });
 
-    if ( !user ) 
+    if (!user)
       throw new UnauthorizedException('Credentials are not valid (email)');
-      
-    if ( !bcrypt.compareSync( password, user.password ) )
+
+    if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('Credentials are not valid (password)');
 
-    return user;
-    //TODO retornar el jwt
+    return {
+      ...user,
+      token: this.getJwtToken({ id: user.id })
+    };
   }
 
 
 
   ////////////////////////////////////////////////////////////////////
+
+  private getJwtToken(payload: JwtPayload) {
+
+    const token = this.jwtService.sign(payload);
+    return token;
+  }
+
 
   //TODO  preguntar si ese never se puede usar en product service para el handleproductserror, es para que jamas devuelva algun valor 
   private handleDBErrors(error: any): never {
