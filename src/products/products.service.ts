@@ -171,7 +171,7 @@ export class ProductsService {
 
 
 
-  private handleDBExceptions(error: any) {
+  private handleDBExceptions(error: any):void {
     //* toda esta funcion de handleDBExceptions es para mostrar el erro mas en especifico 
 
     if (error.code === '23505')

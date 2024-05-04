@@ -16,3 +16,4 @@ export const GetUser = createParamDecorator(
         return (!data) ? user : user[data];  // esto es para cuando no le pongo una condicion de que quiero por ejemplo solo el email entonces que envie todo la info completa 
     }
 )
+

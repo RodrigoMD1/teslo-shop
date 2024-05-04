@@ -22,5 +22,5 @@ export class ProductImage {
     )
     product: Product
 
-    //TODO  averiguar donde esta el productid en la tabla osea esta pero nose de donde saco ese nombre por ejemplo que se genera en la base de datos 
+    //TODO  ver base de datos / buscar entidades , diagrama de entidad relacion ,entidad relacion normalizacion   
 }
