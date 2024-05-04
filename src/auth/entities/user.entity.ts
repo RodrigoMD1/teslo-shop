@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn, } from "typeorm";
+import { Product } from "src/products/entities/product.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
 
 
 
@@ -43,6 +44,17 @@ export class User {
         default: ['user']
     })
     roles: string[];
+
+    /////////////////////////////////////////////////////
+
+    // esto hace que user-id aparezca en la tabla de productos 
+    @OneToMany(
+        () => Product,
+        (product) => product.user
+    )
+    product: Product;
+
+
 
     /////////////////////////////////////////////////////
 

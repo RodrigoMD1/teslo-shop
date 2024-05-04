@@ -7,6 +7,7 @@ import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid'
 import { ProductImage } from './entities/product-image.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 
 @Injectable()
@@ -32,7 +33,7 @@ export class ProductsService {
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
 
     try {
       const { images = [], ...productDetails } = createProductDto
@@ -40,6 +41,7 @@ export class ProductsService {
       const product = this.productRepository.create(
         {
           ...productDetails,
+          user,
           images: images.map(image => ({ url: image }) as DeepPartial<ProductImage>)
         }); //*esto lo crea pero no lo guarda en la base de datos
 
@@ -66,7 +68,7 @@ export class ProductsService {
       relations: {
         images: true,
       }
-    }) ;
+    });
 
     return products.map(product => ({
       ...product,
@@ -115,7 +117,7 @@ export class ProductsService {
 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
 
     const { images, ...toUpdate } = updateProductDto;
 
@@ -132,6 +134,7 @@ export class ProductsService {
     try {
 
       if (images) {
+        // esto es que en un producto puede haber muchas imagenes 
         await queryRunner.manager.delete(ProductImage, { product: { id } })
 
 
@@ -139,6 +142,8 @@ export class ProductsService {
           image => this.productImageRepository.create({ url: image })
         )
       }
+      product.user = user;
+
       await queryRunner.manager.save(product);
       //      await this.productRepository.save(product);
       await queryRunner.commitTransaction();
@@ -171,7 +176,7 @@ export class ProductsService {
 
 
 
-  private handleDBExceptions(error: any):void {
+  private handleDBExceptions(error: any): void {
     //* toda esta funcion de handleDBExceptions es para mostrar el erro mas en especifico 
 
     if (error.code === '23505')
