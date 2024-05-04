@@ -29,7 +29,7 @@ import { JwtStrategy } from './strategies/jwt-strategy';
 
         return {
           // al final de la linea 28 puedo poner || para cuando no este el secret y que salte algun error que no esta o no lo escribieron 
-          secret: configService.get('JWT_SECRET'),// TODO preguntar por este secret que no entendi para que sirve y por que no lo deberia tener casi nadie esto 
+          secret: configService.get('JWT_SECRET'),
           signOptions: {
             expiresIn: '3h'
           }
@@ -45,5 +45,3 @@ import { JwtStrategy } from './strategies/jwt-strategy';
 export class AuthModule { }
 
 
-
-// TODO preguntar sober .env que no entiendo cuando esta el template deberia tener info de lo que va env pero no va la info correct como por ejemplo esa parte secreta de jwt no entiendo mucho eso , tambien preguntar por la funcion flecha nunca la puedo entender para que se usar y en que casos de usa 
