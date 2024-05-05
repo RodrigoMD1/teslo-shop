@@ -52,7 +52,7 @@ export class AuthController {
     @GetUser('email') userEmail: string,// esto para pedir una info en especifico 
 
     @GetRawHeaders() rawHeaders: string[], // el proximo que es headers es lo mismo pero capaz un poco mas util y ya esta hecho por otros 
-    @Headers() headers: IncomingHttpHeaders, // este es mas util y parece que voy a usar mas este 
+    @Headers() headers: IncomingHttpHeaders, // este es mas util y parece que voy a usar mas estee
 
   ) {
 
