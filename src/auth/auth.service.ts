@@ -95,7 +95,7 @@ export class AuthService {
   }
 
 
-  //TODO  preguntar si ese never se puede usar en product service para el handleproductserror, es para que jamas devuelva algun valor 
+  
   private handleDBErrors(error: any): void {
 
     if (error.code === '23505')

@@ -23,7 +23,7 @@ import { MessagesWsModule } from './messages-ws/messages-ws.module';
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     autoLoadEntities: true,
-    synchronize: true,  // cuando este en produccion este no lo voy a querer usar puede que no se necesito o sI 
+    synchronize: true,  // cuando este en produccion este no lo voy a querer usar puede que no se necesito o sI, cuando borro alguna columna automaticamente la sincroniza
 
   }),
 
