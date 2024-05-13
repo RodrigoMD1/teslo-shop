@@ -4,6 +4,7 @@ import { ExecutionContext, InternalServerErrorException, createParamDecorator } 
 
 export const GetUser = createParamDecorator(
     // esto se esta usando en auth.controller en la parte de private solo 
+    //ctx es conexto 
     (data: string, ctx: ExecutionContext) => {
 
         const req = ctx.switchToHttp().getRequest();

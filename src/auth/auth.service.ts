@@ -59,7 +59,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true, id: true } //! OJO!
+      select: { email: true, password: true, id: true } //! OJO! tengo que poner eso del id en true para que por el jwt me muestre quien fue 
     });
 
     if (!user)
