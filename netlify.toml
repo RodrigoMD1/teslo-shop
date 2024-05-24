@@ -19,3 +19,6 @@
   #  publish = "dist" # Folder with the static content for _redirect file
 
   ## more info on configuring this file: https://ntl.fyi/file-based-build-config
+
+  [context.production.environment]
+  API_URL = "https://delightful-maamoul-91b2b9.netlify.app/"
