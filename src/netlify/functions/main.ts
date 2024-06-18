@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '../../app.module';
 import { ValidationPipe } from '@nestjs/common';
 import ServerlessHttp = require('serverless-http');
 
@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   // const logger = new Logger('Bootstrap');
-  const globalPrefix = '/';
+  const globalPrefix = '.netlify/functions/main';
 
   app.setGlobalPrefix(globalPrefix);
 
@@ -34,7 +34,7 @@ let server;
 export const handler = async (event, context, callback) => {
   server = server ?? (await bootstrap());
 
-  const response = await server(event, context, callback);
+  const response = server(event, context, callback);
 
   console.log('SERVER RESPONSE', response);
 
